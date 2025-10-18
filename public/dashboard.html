@@ -1,0 +1,1700 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="Content-Security-Policy" content="default-src 'self' 'unsafe-inline'">
+    <title>Dashboard - Purificadora Control PNC</title>
+    <style>
+        /* CSS para el Diseño Original y Marca de Agua */
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #f4f4f4;
+            /* Estilo de la marca de agua: Imagen de fondo sutil y fija */
+            background-image: url('logo.jpg'); 
+            background-repeat: no-repeat;
+            background-position: center;
+            background-attachment: fixed;
+            background-size: 50%; /* Ajusta el tamaño de la imagen */
+            opacity: 0.95; /* Controla la opacidad global del body, ajusta si es necesario */
+        }
+        
+        /* Contenedor principal para que el contenido no quede transparente */
+        .container-wrapper {
+            background-color: rgba(244, 244, 244, 0.9); /* Un fondo ligeramente opaco para contraste */
+            min-height: 100vh; /* Asegura que cubre toda la altura */
+        }
+
+        .container {
+            width: 80%;
+            margin: auto;
+            overflow: hidden;
+            padding-bottom: 50px; /* Espacio al final de la página */
+        }
+
+        header {
+            background: #333;
+            color: #fff;
+            padding-top: 30px;
+            min-height: 70px;
+            border-bottom: #0779e4 3px solid;
+            margin-bottom: 20px;
+        }
+
+        header a {
+            color: #fff;
+            text-decoration: none;
+            text-transform: uppercase;
+            font-size: 16px;
+        }
+
+        header ul {
+            padding: 0;
+            list-style: none;
+        }
+
+        header li {
+            float: left;
+            display: inline;
+            padding: 0 20px 0 20px;
+        }
+
+        header #branding {
+            float: left;
+        }
+
+        header #branding h1 {
+            margin: 0;
+        }
+
+        header nav {
+            float: right;
+            margin-top: 10px;
+        }
+
+        .user-info {
+            background: #e4e4e4;
+            padding: 10px;
+            margin-bottom: 20px;
+            border-radius: 5px;
+            text-align: right;
+            float: right;
+            margin-top: -20px; /* Ajuste visual */
+        }
+
+        .user-info h3 {
+            margin: 0;
+            color: #333;
+        }
+
+        .user-type {
+            font-size: 14px;
+            color: #666;
+        }
+
+        .actions button {
+            background-color: #0779e4;
+            color: white;
+            padding: 10px 15px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            margin-right: 10px;
+            margin-bottom: 20px;
+            transition: background-color 0.3s;
+        }
+
+        .actions button:hover {
+            background-color: #055ba3;
+        }
+        
+        #btnUsers {
+            background-color: #f39c12;
+        }
+        
+        #btnUsers:hover {
+            background-color: #e67e22;
+        }
+        
+        #btnOficina {
+            background-color: #27ae60;
+        }
+        
+        #btnOficina:hover {
+            background-color: #219a52;
+        }
+        
+        #btnLimpieza {
+            background-color: #8e44ad;
+        }
+        
+        #btnLimpieza:hover {
+            background-color: #7d3c98;
+        }
+        
+        #btnGarrafones {
+            background-color: #e67e22;
+        }
+        
+        #btnGarrafones:hover {
+            background-color: #d35400;
+        }
+        
+        #btnMovimientos {
+            background-color: #34495e;
+        }
+        
+        #btnMovimientos:hover {
+            background-color: #2c3e50;
+        }
+        
+        #btnLogout {
+            background-color: #e74c3c;
+        }
+        
+        #btnLogout:hover {
+            background-color: #c0392b;
+        }
+
+        .section {
+            background: #fff;
+            padding: 20px;
+            margin-bottom: 20px;
+            border-radius: 5px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        }
+
+        .section h2 {
+            color: #333;
+            border-bottom: 1px solid #eee;
+            padding-bottom: 10px;
+            margin-bottom: 15px;
+        }
+
+        .file-item, .user-item, .inventory-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 10px 0;
+            border-bottom: 1px solid #f4f4f4;
+        }
+
+        .file-item:last-child, .user-item:last-child, .inventory-item:last-child {
+            border-bottom: none;
+        }
+
+        .file-info, .user-info-details, .inventory-info {
+            flex-grow: 1;
+        }
+
+        .file-actions button, .user-actions button, .file-actions a, .inventory-actions button {
+            background-color: #0779e4;
+            color: white;
+            padding: 5px 10px;
+            border: none;
+            border-radius: 3px;
+            cursor: pointer;
+            margin-left: 5px;
+            text-decoration: none;
+            font-size: 14px;
+            transition: background-color 0.3s;
+        }
+
+        .file-actions button.delete, .user-actions button.delete {
+            background-color: #e74c3c;
+        }
+        
+        .inventory-actions button.entrada {
+            background-color: #27ae60;
+        }
+        
+        .inventory-actions button.salida {
+            background-color: #e74c3c;
+        }
+
+        /* NUEVOS ESTILOS PARA BOTONES EDITAR/ELIMINAR */
+        .btn-editar, .btn-eliminar {
+            padding: 5px 10px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 12px;
+            margin-left: 5px;
+        }
+
+        .btn-editar {
+            background-color: #4CAF50;
+            color: white;
+        }
+
+        .btn-editar:hover {
+            background-color: #45a049;
+        }
+
+        .btn-eliminar {
+            background-color: #f44336;
+            color: white;
+        }
+
+        .btn-eliminar:hover {
+            background-color: #da190b;
+        }
+
+        .acciones {
+            display: flex;
+            gap: 5px;
+            flex-wrap: wrap;
+        }
+        
+        .file-actions button.delete:hover, .user-actions button.delete:hover {
+            background-color: #c0392b;
+        }
+        
+        .inventory-actions button.entrada:hover {
+            background-color: #219a52;
+        }
+        
+        .inventory-actions button.salida:hover {
+            background-color: #c0392b;
+        }
+        
+        .file-actions a:hover {
+            background-color: #055ba3;
+        }
+
+        .modal {
+            display: none; 
+            position: fixed; 
+            z-index: 1000;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            overflow: auto;
+            background-color: rgba(0,0,0,0.4); 
+            justify-content: center;
+            align-items: center;
+        }
+
+        .modal-content {
+            background-color: #fefefe;
+            padding: 20px;
+            border: 1px solid #888;
+            width: 40%;
+            border-radius: 8px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.3);
+        }
+
+        .close-btn {
+            color: #aaa;
+            float: right;
+            font-size: 28px;
+            font-weight: bold;
+        }
+
+        .close-btn:hover,
+        .close-btn:focus {
+            color: #000;
+            text-decoration: none;
+            cursor: pointer;
+        }
+
+        .alert {
+            padding: 10px;
+            margin-bottom: 20px;
+            border-radius: 5px;
+            display: none;
+        }
+
+        .alert-success {
+            background-color: #d4edda;
+            color: #155724;
+            border: 1px solid #c3e6cb;
+        }
+
+        .alert-error {
+            background-color: #f8d7da;
+            color: #721c24;
+            border: 1px solid #f5c6cb;
+        }
+        
+        /* Estilos de Insignias */
+        .user-badge {
+            display: inline-block;
+            padding: 4px 8px;
+            border-radius: 12px;
+            font-size: 12px;
+            font-weight: bold;
+            text-transform: uppercase;
+            margin-top: 5px;
+        }
+
+        .badge-maestro {
+            background: #FFD700;
+            color: #333;
+        }
+
+        .badge-admin {
+            background: #0779e4;
+            color: white;
+        }
+
+        .badge-invitado {
+            background: #95a5a6;
+            color: white;
+        }
+        
+        /* Estilos para tablas de inventario */
+        .inventory-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 10px;
+        }
+        
+        .inventory-table th, .inventory-table td {
+            border: 1px solid #ddd;
+            padding: 8px;
+            text-align: left;
+        }
+        
+        .inventory-table th {
+            background-color: #f2f2f2;
+            font-weight: bold;
+        }
+        
+        .inventory-table tr:nth-child(even) {
+            background-color: #f9f9f9;
+        }
+        
+        .cantidad-badge {
+            display: inline-block;
+            padding: 2px 8px;
+            border-radius: 10px;
+            font-size: 12px;
+            font-weight: bold;
+        }
+        
+        .cantidad-alta {
+            background: #d4edda;
+            color: #155724;
+        }
+        
+        .cantidad-media {
+            background: #fff3cd;
+            color: #856404;
+        }
+        
+        .cantidad-baja {
+            background: #f8d7da;
+            color: #721c24;
+        }
+        
+        .form-group {
+            margin-bottom: 15px;
+        }
+        
+        .form-group label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: bold;
+        }
+        
+        .form-group input, .form-group select, .form-group textarea {
+            width: 100%;
+            padding: 8px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            box-sizing: border-box;
+        }
+        
+        .inventory-stats {
+            display: flex;
+            justify-content: space-around;
+            margin-bottom: 20px;
+            text-align: center;
+        }
+        
+        .stat-card {
+            background: #f8f9fa;
+            padding: 15px;
+            border-radius: 5px;
+            border-left: 4px solid #0779e4;
+        }
+        
+        .stat-number {
+            font-size: 24px;
+            font-weight: bold;
+            color: #0779e4;
+        }
+        
+        .stat-label {
+            font-size: 14px;
+            color: #666;
+        }
+
+        /* NUEVOS ESTILOS PARA BARRA DE BÚSQUEDA */
+        .search-container {
+            margin-bottom: 20px;
+            display: flex;
+            gap: 10px;
+            align-items: center;
+            flex-wrap: wrap;
+        }
+
+        .search-input {
+            flex: 1;
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            font-size: 14px;
+            min-width: 250px;
+        }
+
+        .search-select {
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            font-size: 14px;
+            background-color: white;
+        }
+
+        .search-button {
+            background-color: #0779e4;
+            color: white;
+            padding: 10px 15px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 14px;
+            transition: background-color 0.3s;
+        }
+
+        .search-button:hover {
+            background-color: #055ba3;
+        }
+
+        .search-button.clear {
+            background-color: #95a5a6;
+        }
+
+        .search-button.clear:hover {
+            background-color: #7f8c8d;
+        }
+
+        .search-info {
+            margin-top: 10px;
+            padding: 10px;
+            background-color: #f8f9fa;
+            border-radius: 4px;
+            font-size: 14px;
+            color: #666;
+        }
+
+        .no-results {
+            text-align: center;
+            padding: 20px;
+            color: #666;
+            font-style: italic;
+        }
+
+    </style>
+</head>
+<body>
+    <div class="container-wrapper"> 
+        <header>
+            <div class="container">
+                <div id="branding">
+                    <h1>Purificadora Control PNC</h1>
+                </div>
+            </div>
+            <div class="user-info">
+                <h3 id="userName">Cargando...</h3>
+                <p class="user-type" id="userType">Tipo</p>
+            </div>
+        </header>
+
+        <div class="container" style="margin-top: 20px;">
+            <div id="alert" class="alert"></div>
+
+            <div class="actions">
+                <button id="btnUpload" style="display:none;">📁 Ver Archivos</button>
+                <button id="btnUsers" style="display:none;">Ver Usuarios</button>
+                <button id="btnOficina" style="display:none;">📁 Útiles Oficina</button>
+                <button id="btnLimpieza" style="display:none;">🧹 Útiles Limpieza</button>
+                <button id="btnGarrafones" style="display:none;">💧 Garrafones/Sellos</button>
+                <button id="btnMovimientos" style="display:none;">📊 Movimientos</button>
+                <button id="btnLogout" onclick="logout()">Cerrar Sesión</button>
+            </div>
+            
+            <!-- Sección de Usuarios -->
+            <div id="usersSection" class="section" style="display:none;">
+                <h2>Usuarios Registrados</h2>
+                <div id="usersList">
+                    <!-- Los usuarios se cargarán aquí -->
+                </div>
+            </div>
+            
+            
+            <!-- Secciones de Inventario -->
+            <div id="oficinaSection" class="section" style="display:none;">
+                <h2>📁 Inventario - Útiles de Oficina</h2>
+                <div id="oficinaStats" class="inventory-stats"></div>
+                <div class="inventory-actions" id="oficinaActions">
+                    <button onclick="showAddOficinaModal()">➕ Agregar Útil</button>
+                </div>
+                <div id="oficinaList">
+                    <!-- Los útiles de oficina se cargarán aquí -->
+                </div>
+            </div>
+            
+            <div id="limpiezaSection" class="section" style="display:none;">
+                <h2>🧹 Inventario - Útiles de Limpieza</h2>
+                <div id="limpiezaStats" class="inventory-stats"></div>
+                <div class="inventory-actions" id="limpiezaActions">
+                    <button onclick="showAddLimpiezaModal()">➕ Agregar Producto</button>
+                </div>
+                <div id="limpiezaList">
+                    <!-- Los útiles de limpieza se cargarán aquí -->
+                </div>
+            </div>
+            
+            <div id="garrafonesSection" class="section" style="display:none;">
+                <h2>💧 Inventario - Garrafones, Sellos y Tapones</h2>
+                <div id="garrafonesStats" class="inventory-stats"></div>
+                <div class="inventory-actions" id="garrafonesActions">
+                    <button onclick="showAddGarrafonesModal()">➕ Agregar Item</button>
+                </div>
+                <div id="garrafonesList">
+                    <!-- Los garrafones, sellos y tapones se cargarán aquí -->
+                </div>
+            </div>
+            
+            <div id="movimientosSection" class="section" style="display:none;">
+                <h2>📊 Historial de Movimientos</h2>
+                
+                <!-- Barra de búsqueda para movimientos -->
+                <div class="search-container">
+                    <input type="text" id="searchMovimientos" class="search-input" placeholder="Buscar en movimientos...">
+                    <select id="filterTipo" class="search-select">
+                        <option value="">Todos los tipos</option>
+                        <option value="oficina">Útiles Oficina</option>
+                        <option value="limpieza">Útiles Limpieza</option>
+                        <option value="garrafones">Garrafones/Sellos</option>
+                    </select>
+                    <select id="filterMovimiento" class="search-select">
+                        <option value="">Todos los movimientos</option>
+                        <option value="entrada">Entrada</option>
+                        <option value="salida">Salida</option>
+                    </select>
+                    <button onclick="filtrarMovimientos()" class="search-button">🔍 Buscar</button>
+                    <button onclick="limpiarFiltros()" class="search-button clear">🔄 Limpiar</button>
+                </div>
+                
+                <div id="searchInfo" class="search-info" style="display: none;">
+                    <!-- Información de búsqueda se mostrará aquí -->
+                </div>
+                
+                <div id="movimientosList">
+                    <!-- Los movimientos se cargarán aquí -->
+                </div>
+            </div>
+
+            <!-- Sección de Archivos -->
+            <div id="filesSection" class="section" style="display:none;">
+                <h2>📁 Archivos Disponibles</h2>
+                <div id="filesList">
+                    <!-- Los archivos se cargarán aquí -->
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modales para Inventarios -->
+    <div id="addOficinaModal" class="modal">
+        <div class="modal-content">
+            <span class="close-btn" onclick="closeAddOficinaModal()">&times;</span>
+            <h2>Agregar Útil de Oficina</h2>
+            <form id="addOficinaForm">
+                <div class="form-group">
+                    <label for="oficinaNombre">Nombre:</label>
+                    <input type="text" id="oficinaNombre" required>
+                </div>
+                <div class="form-group">
+                    <label for="oficinaCantidad">Cantidad Inicial:</label>
+                    <input type="number" id="oficinaCantidad" required min="0">
+                </div>
+                <div class="form-group">
+                    <label for="oficinaDescripcion">Descripción:</label>
+                    <textarea id="oficinaDescripcion"></textarea>
+                </div>
+                <div class="form-group">
+                    <label for="oficinaUbicacion">Ubicación:</label>
+                    <input type="text" id="oficinaUbicacion">
+                </div>
+                <button type="submit">Agregar</button>
+            </form>
+        </div>
+    </div>
+
+    <div id="addLimpiezaModal" class="modal">
+        <div class="modal-content">
+            <span class="close-btn" onclick="closeAddLimpiezaModal()">&times;</span>
+            <h2>Agregar Producto de Limpieza</h2>
+            <form id="addLimpiezaForm">
+                <div class="form-group">
+                    <label for="limpiezaProducto">Producto:</label>
+                    <input type="text" id="limpiezaProducto" required>
+                </div>
+                <div class="form-group">
+                    <label for="limpiezaCantidad">Cantidad Inicial:</label>
+                    <input type="number" id="limpiezaCantidad" required min="0">
+                </div>
+                <div class="form-group">
+                    <label for="limpiezaTipo">Tipo:</label>
+                    <input type="text" id="limpiezaTipo" placeholder="Detergente, Desinfectante, etc.">
+                </div>
+                <div class="form-group">
+                    <label for="limpiezaProveedor">Proveedor:</label>
+                    <input type="text" id="limpiezaProveedor">
+                </div>
+                <button type="submit">Agregar</button>
+            </form>
+        </div>
+    </div>
+
+    <div id="addGarrafonesModal" class="modal">
+        <div class="modal-content">
+            <span class="close-btn" onclick="closeAddGarrafonesModal()">&times;</span>
+            <h2>Agregar Item</h2>
+            <form id="addGarrafonesForm">
+                <div class="form-group">
+                    <label for="garrafonesTipo">Tipo:</label>
+                    <select id="garrafonesTipo" required>
+                        <option value="garrafon">Garrafón</option>
+                        <option value="sello">Sello</option>
+                        <option value="tapon">Tapón</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label for="garrafonesCantidad">Cantidad Inicial:</label>
+                    <input type="number" id="garrafonesCantidad" required min="0">
+                </div>
+                <div class="form-group">
+                    <label for="garrafonesEstado">Estado:</label>
+                    <select id="garrafonesEstado">
+                        <option value="nuevo">Nuevo</option>
+                        <option value="usado">Usado</option>
+                        <option value="danado">Dañado</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label for="garrafonesUbicacion">Ubicación:</label>
+                    <input type="text" id="garrafonesUbicacion">
+                </div>
+                <div class="form-group">
+                    <label for="garrafonesObservaciones">Observaciones:</label>
+                    <textarea id="garrafonesObservaciones"></textarea>
+                </div>
+                <button type="submit">Agregar</button>
+            </form>
+        </div>
+    </div>
+
+    <!-- Modal para Movimientos -->
+    <div id="movimientoModal" class="modal">
+        <div class="modal-content">
+            <span class="close-btn" onclick="closeMovimientoModal()">&times;</span>
+            <h2 id="movimientoTitle">Registrar Movimiento</h2>
+            <form id="movimientoForm">
+                <input type="hidden" id="movimientoItemId">
+                <input type="hidden" id="movimientoTipo">
+                <div class="form-group">
+                    <label for="movimientoTipoMov">Tipo de Movimiento:</label>
+                    <select id="movimientoTipoMov" required>
+                        <option value="entrada">Entrada</option>
+                        <option value="salida">Salida</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label for="movimientoCantidad">Cantidad:</label>
+                    <input type="number" id="movimientoCantidad" required min="1">
+                </div>
+                <div class="form-group">
+                    <label for="movimientoObservaciones">Observaciones:</label>
+                    <textarea id="movimientoObservaciones" placeholder="Motivo del movimiento..."></textarea>
+                </div>
+                <button type="submit">Registrar Movimiento</button>
+            </form>
+        </div>
+    </div>
+
+    <script>
+        let currentUser = null;
+        let allMovimientos = []; // Almacenar todos los movimientos para filtrado
+
+        async function loadUser() {
+            try {
+                const response = await fetch('/api/user');
+                if (!response.ok) {
+                    window.location.href = 'login.html';
+                    return;
+                }
+                currentUser = await response.json();
+                document.getElementById('userName').textContent = currentUser.nombre;
+                document.getElementById('userType').innerHTML = `<span class="user-badge badge-${currentUser.tipo}">${currentUser.tipo}</span>`; 
+
+                // Mostrar botones según permisos
+                if (currentUser.tipo === 'admin' || currentUser.tipo === 'maestro') {
+                    document.getElementById('btnUpload').style.display = 'inline-block';
+                    document.getElementById('btnOficina').style.display = 'inline-block';
+                    document.getElementById('btnLimpieza').style.display = 'inline-block';
+                    document.getElementById('btnGarrafones').style.display = 'inline-block';
+                    document.getElementById('btnMovimientos').style.display = 'inline-block';
+                    
+                    // Mostrar botones de agregar para admin/maestro
+                    document.getElementById('oficinaActions').style.display = 'block';
+                    document.getElementById('limpiezaActions').style.display = 'block';
+                    document.getElementById('garrafonesActions').style.display = 'block';
+                }
+
+                if (currentUser.tipo === 'maestro') {
+                    document.getElementById('btnUsers').style.display = 'inline-block';
+                }
+
+                // INVITADOS pueden ver garrafones, movimientos y ARCHIVOS pero no modificar
+                if (currentUser.tipo === 'invitado') {
+                    document.getElementById('btnGarrafones').style.display = 'inline-block';
+                    document.getElementById('btnMovimientos').style.display = 'inline-block';
+                    document.getElementById('btnUpload').style.display = 'inline-block'; // BOTÓN PARA VER ARCHIVOS
+                    
+                    // OCULTAR botones de agregar para invitados
+                    document.getElementById('oficinaActions').style.display = 'none';
+                    document.getElementById('limpiezaActions').style.display = 'none';
+                    document.getElementById('garrafonesActions').style.display = 'none';
+                }
+            } catch (error) {
+                window.location.href = 'login.html';
+            }
+        }
+
+        // Función para cargar archivos (para todos los usuarios)
+        async function loadFiles() {
+            try {
+                hideAllSections();
+                const response = await fetch('/api/files');
+                const files = await response.json();
+                
+                const filesSection = document.getElementById('filesSection');
+                const filesList = document.getElementById('filesList');
+
+                filesSection.style.display = 'block';
+                filesList.innerHTML = '';
+
+                if (files.length === 0) {
+                    filesList.innerHTML = '<p>No hay archivos disponibles en este momento.</p>';
+                    return;
+                }
+
+                // Determinar si es usuario invitado
+                const esInvitado = currentUser.tipo === 'invitado';
+
+                files.forEach(file => {
+                    const fileItem = document.createElement('div');
+                    fileItem.className = 'file-item';
+                    
+                    const date = new Date(file.fecha_subida).toLocaleDateString('es-GT', { 
+                        year: 'numeric', month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit' 
+                    });
+
+                    fileItem.innerHTML = `
+                        <div class="file-info">
+                            <strong>${file.nombre_original}</strong>
+                            <p style="font-size: 12px; color: #666;">Subido por: ${file.subido_por_nombre || 'Desconocido'} (${date})</p>
+                        </div>
+                        <div class="file-actions">
+                            <a href="/uploads/${file.nombre_archivo}" download="📥 ${file.nombre_original}">📥 Descargar</a>
+                            ${!esInvitado && (currentUser.tipo === 'admin' || currentUser.tipo === 'maestro') ? 
+                                `<button onclick="deleteFile(${file.id})" class="delete">🗑️ Eliminar</button>` : ''}
+                        </div>
+                    `;
+                    filesList.appendChild(fileItem);
+                });
+            } catch (error) {
+                showAlert('Error al cargar archivos', 'error');
+            }
+        }
+
+        async function loadUsers() {
+            try {
+                hideAllSections();
+                const response = await fetch('/api/users');
+                
+                if (!response.ok) {
+                    if (response.status === 403) {
+                        showAlert('Permiso denegado: Solo el usuario maestro puede ver usuarios.', 'error');
+                        return;
+                    }
+                    throw new Error(`Error HTTP: ${response.status}`);
+                }
+                
+                const users = await response.json();
+                const usersList = document.getElementById('usersList');
+                const usersSection = document.getElementById('usersSection');
+
+                usersSection.style.display = 'block';
+                usersList.innerHTML = ''; 
+
+                if (users.length === 0) {
+                    usersList.innerHTML = '<p>No hay usuarios registrados aparte del maestro.</p>';
+                    return;
+                }
+
+                users.forEach(user => {
+                    const userItem = document.createElement('div');
+                    userItem.className = 'user-item';
+                    
+                    const date = new Date(user.fecha_registro).toLocaleDateString('es-GT');
+
+                    userItem.innerHTML = `
+                        <div class="user-info-details">
+                            <strong>${user.nombre}</strong> (${user.email})
+                            <p style="font-size: 12px; color: #666;">Registro: ${date}</p>
+                            <span class="user-badge badge-${user.tipo}">${user.tipo}</span>
+                        </div>
+                        <div class="user-actions">
+                            ${user.tipo !== 'maestro' ? 
+                                `<button onclick="deleteUser(${user.id})" class="delete">Eliminar</button>` : ''}
+                        </div>
+                    `;
+                    usersList.appendChild(userItem);
+                });
+                
+            } catch (error) {
+                console.error('Error en loadUsers:', error);
+                showAlert('Error al cargar usuarios. Intente de nuevo.', 'error');
+            }
+        }
+
+        // --- Funciones de Inventario ---
+
+        // Útiles de Oficina - VERSIÓN CORREGIDA
+        async function loadOficina() {
+            try {
+                hideAllSections();
+                const response = await fetch('/api/inventario/oficina');
+                const items = await response.json();
+                const oficinaSection = document.getElementById('oficinaSection');
+                const oficinaList = document.getElementById('oficinaList');
+
+                oficinaSection.style.display = 'block';
+                updateOficinaStats(items);
+                
+                if (items.length === 0) {
+                    oficinaList.innerHTML = '<p>No hay útiles de oficina registrados.</p>';
+                    return;
+                }
+
+                // DETERMINAR SI ES USUARIO INVITADO
+                const esInvitado = currentUser.tipo === 'invitado';
+
+                oficinaList.innerHTML = `
+                    <table class="inventory-table">
+                        <thead>
+                            <tr>
+                                <th>Nombre</th>
+                                <th>Cantidad</th>
+                                <th>Descripción</th>
+                                <th>Ubicación</th>
+                                <th>Registrado por</th>
+                                ${!esInvitado ? '<th>Acciones</th>' : ''}
+                            </tr>
+                        </thead>
+                        <tbody>
+                            ${items.map(item => `
+                                <tr>
+                                    <td>${item.nombre}</td>
+                                    <td>
+                                        <span class="cantidad-badge ${getCantidadClass(item.cantidad)}">
+                                            ${item.cantidad}
+                                        </span>
+                                    </td>
+                                    <td>${item.descripcion || '-'}</td>
+                                    <td>${item.ubicacion || '-'}</td>
+                                    <td>${item.usuario_nombre} (${new Date(item.fecha_ingreso).toLocaleDateString('es-GT')})</td>
+                                    ${!esInvitado ? `
+                                        <td class="acciones">
+                                            <button onclick="showMovimientoModal('oficina', ${item.id}, '${item.nombre}')" class="entrada">Entrada</button>
+                                            <button onclick="showMovimientoModal('oficina', ${item.id}, '${item.nombre}')" class="salida">Salida</button>
+                                            <button onclick="editarOficina(${item.id})" class="btn-editar">✏️ Editar</button>
+                                            <button onclick="eliminarOficina(${item.id})" class="btn-eliminar">🗑️ Eliminar</button>
+                                        </td>
+                                    ` : ''}
+                                </tr>
+                            `).join('')}
+                        </tbody>
+                    </table>
+                `;
+            } catch (error) {
+                console.error('Error cargando oficina:', error);
+                showAlert('Error al cargar inventario de oficina', 'error');
+            }
+        }
+
+        // Útiles de Limpieza - VERSIÓN CORREGIDA
+        async function loadLimpieza() {
+            try {
+                hideAllSections();
+                const response = await fetch('/api/inventario/limpieza');
+                const items = await response.json();
+                const limpiezaSection = document.getElementById('limpiezaSection');
+                const limpiezaList = document.getElementById('limpiezaList');
+
+                limpiezaSection.style.display = 'block';
+                updateLimpiezaStats(items);
+                
+                if (items.length === 0) {
+                    limpiezaList.innerHTML = '<p>No hay productos de limpieza registrados.</p>';
+                    return;
+                }
+
+                // DETERMINAR SI ES USUARIO INVITADO
+                const esInvitado = currentUser.tipo === 'invitado';
+
+                limpiezaList.innerHTML = `
+                    <table class="inventory-table">
+                        <thead>
+                            <tr>
+                                <th>Producto</th>
+                                <th>Cantidad</th>
+                                <th>Tipo</th>
+                                <th>Proveedor</th>
+                                <th>Registrado por</th>
+                                ${!esInvitado ? '<th>Acciones</th>' : ''}
+                            </tr>
+                        </thead>
+                        <tbody>
+                            ${items.map(item => `
+                                <tr>
+                                    <td>${item.producto}</td>
+                                    <td>
+                                        <span class="cantidad-badge ${getCantidadClass(item.cantidad)}">
+                                            ${item.cantidad}
+                                        </span>
+                                    </td>
+                                    <td>${item.tipo || '-'}</td>
+                                    <td>${item.proveedor || '-'}</td>
+                                    <td>${item.usuario_nombre} (${new Date(item.fecha_ingreso).toLocaleDateString('es-GT')})</td>
+                                    ${!esInvitado ? `
+                                        <td class="acciones">
+                                            <button onclick="showMovimientoModal('limpieza', ${item.id}, '${item.producto}')" class="entrada">Entrada</button>
+                                            <button onclick="showMovimientoModal('limpieza', ${item.id}, '${item.producto}')" class="salida">Salida</button>
+                                            <button onclick="editarLimpieza(${item.id})" class="btn-editar">✏️ Editar</button>
+                                            <button onclick="eliminarLimpieza(${item.id})" class="btn-eliminar">🗑️ Eliminar</button>
+                                        </td>
+                                    ` : ''}
+                                </tr>
+                            `).join('')}
+                        </tbody>
+                    </table>
+                `;
+            } catch (error) {
+                console.error('Error cargando limpieza:', error);
+                showAlert('Error al cargar inventario de limpieza', 'error');
+            }
+        }
+
+        // Garrafones, Sellos y Tapones - VERSIÓN SOLO LECTURA PARA INVITADOS
+        async function loadGarrafones() {
+            try {
+                hideAllSections();
+                const response = await fetch('/api/inventario/garrafones');
+                const items = await response.json();
+                const garrafonesSection = document.getElementById('garrafonesSection');
+                const garrafonesList = document.getElementById('garrafonesList');
+
+                garrafonesSection.style.display = 'block';
+                updateGarrafonesStats(items);
+                
+                if (items.length === 0) {
+                    garrafonesList.innerHTML = '<p>No hay items registrados.</p>';
+                    return;
+                }
+
+                // DETERMINAR SI ES USUARIO INVITADO
+                const esInvitado = currentUser.tipo === 'invitado';
+
+                garrafonesList.innerHTML = `
+                    <table class="inventory-table">
+                        <thead>
+                            <tr>
+                                <th>Tipo</th>
+                                <th>Cantidad</th>
+                                <th>Estado</th>
+                                <th>Ubicación</th>
+                                <th>Observaciones</th>
+                                <th>Registrado por</th>
+                                ${!esInvitado ? '<th>Acciones</th>' : ''}
+                            </tr>
+                        </thead>
+                        <tbody>
+                            ${items.map(item => `
+                                <tr>
+                                    <td>${getTipoNombre(item.tipo)}</td>
+                                    <td>
+                                        <span class="cantidad-badge ${getCantidadClass(item.cantidad)}">
+                                            ${item.cantidad}
+                                        </span>
+                                    </td>
+                                    <td>${getEstadoNombre(item.estado)}</td>
+                                    <td>${item.ubicacion || '-'}</td>
+                                    <td>${item.observaciones || '-'}</td>
+                                    <td>${item.usuario_nombre} (${new Date(item.fecha_registro).toLocaleDateString('es-GT')})</td>
+                                    ${!esInvitado ? `
+                                        <td class="acciones">
+                                            <button onclick="showMovimientoModal('garrafones', ${item.id}, '${getTipoNombre(item.tipo)}')" class="entrada">Entrada</button>
+                                            <button onclick="showMovimientoModal('garrafones', ${item.id}, '${getTipoNombre(item.tipo)}')" class="salida">Salida</button>
+                                            <button onclick="editarGarrafon(${item.id})" class="btn-editar">✏️ Editar</button>
+                                            <button onclick="eliminarGarrafon(${item.id})" class="btn-eliminar">🗑️ Eliminar</button>
+                                        </td>
+                                    ` : ''}
+                                </tr>
+                            `).join('')}
+                        </tbody>
+                    </table>
+                `;
+            } catch (error) {
+                console.error('Error cargando garrafones:', error);
+                showAlert('Error al cargar inventario de garrafones', 'error');
+            }
+        }
+
+        // Movimientos - VERSIÓN CON BÚSQUEDA
+        async function loadMovimientos() {
+            try {
+                hideAllSections();
+                const response = await fetch('/api/inventario/movimientos');
+                const movimientos = await response.json();
+                const movimientosSection = document.getElementById('movimientosSection');
+                const movimientosList = document.getElementById('movimientosList');
+
+                movimientosSection.style.display = 'block';
+                
+                // Guardar todos los movimientos para el filtrado
+                allMovimientos = movimientos;
+                
+                // Mostrar todos los movimientos inicialmente
+                mostrarMovimientosFiltrados(movimientos);
+                
+            } catch (error) {
+                console.error('Error cargando movimientos:', error);
+                showAlert('Error al cargar movimientos', 'error');
+            }
+        }
+
+        // Función para filtrar movimientos
+        function filtrarMovimientos() {
+            const searchTerm = document.getElementById('searchMovimientos').value.toLowerCase();
+            const filterTipo = document.getElementById('filterTipo').value;
+            const filterMovimiento = document.getElementById('filterMovimiento').value;
+
+            let filtered = allMovimientos.filter(mov => {
+                // Buscar en todas las columnas
+                const matchesSearch = 
+                    mov.fecha_movimiento.toLowerCase().includes(searchTerm) ||
+                    getInventarioNombre(mov.tipo_inventario).toLowerCase().includes(searchTerm) ||
+                    mov.movimiento.toLowerCase().includes(searchTerm) ||
+                    mov.cantidad.toString().includes(searchTerm) ||
+                    mov.usuario_nombre.toLowerCase().includes(searchTerm) ||
+                    (mov.observaciones && mov.observaciones.toLowerCase().includes(searchTerm));
+
+                const matchesTipo = !filterTipo || mov.tipo_inventario === filterTipo;
+                const matchesMovimiento = !filterMovimiento || mov.movimiento === filterMovimiento;
+
+                return matchesSearch && matchesTipo && matchesMovimiento;
+            });
+
+            mostrarMovimientosFiltrados(filtered, searchTerm, filterTipo, filterMovimiento);
+        }
+
+        // Función para mostrar movimientos filtrados
+        function mostrarMovimientosFiltrados(movimientos, searchTerm = '', filterTipo = '', filterMovimiento = '') {
+            const movimientosList = document.getElementById('movimientosList');
+            const searchInfo = document.getElementById('searchInfo');
+
+            if (movimientos.length === 0) {
+                movimientosList.innerHTML = `
+                    <div class="no-results">
+                        <p>No se encontraron movimientos que coincidan con los criterios de búsqueda.</p>
+                        ${searchTerm || filterTipo || filterMovimiento ? 
+                            '<p>Intenta con otros términos o <button onclick="limpiarFiltros()" class="search-button clear" style="margin-left: 10px;">limpiar filtros</button></p>' : ''}
+                    </div>
+                `;
+            } else {
+                movimientosList.innerHTML = `
+                    <table class="inventory-table">
+                        <thead>
+                            <tr>
+                                <th>Fecha</th>
+                                <th>Inventario</th>
+                                <th>Movimiento</th>
+                                <th>Cantidad</th>
+                                <th>Usuario</th>
+                                <th>Observaciones</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            ${movimientos.map(mov => `
+                                <tr>
+                                    <td>${new Date(mov.fecha_movimiento).toLocaleString('es-GT')}</td>
+                                    <td>${getInventarioNombre(mov.tipo_inventario)}</td>
+                                    <td>
+                                        <span class="cantidad-badge ${mov.movimiento === 'entrada' ? 'cantidad-alta' : 'cantidad-baja'}">
+                                            ${mov.movimiento === 'entrada' ? '➕ Entrada' : '➖ Salida'}
+                                        </span>
+                                    </td>
+                                    <td>${mov.cantidad}</td>
+                                    <td>${mov.usuario_nombre}</td>
+                                    <td>${mov.observaciones || '-'}</td>
+                                </tr>
+                            `).join('')}
+                        </tbody>
+                    </table>
+                `;
+            }
+
+            // Mostrar información de búsqueda
+            if (searchTerm || filterTipo || filterMovimiento) {
+                let infoText = `Mostrando ${movimientos.length} de ${allMovimientos.length} movimientos`;
+                
+                if (searchTerm) {
+                    infoText += ` • Búsqueda: "${searchTerm}"`;
+                }
+                if (filterTipo) {
+                    infoText += ` • Tipo: ${document.getElementById('filterTipo').options[document.getElementById('filterTipo').selectedIndex].text}`;
+                }
+                if (filterMovimiento) {
+                    infoText += ` • Movimiento: ${document.getElementById('filterMovimiento').options[document.getElementById('filterMovimiento').selectedIndex].text}`;
+                }
+
+                searchInfo.innerHTML = infoText;
+                searchInfo.style.display = 'block';
+            } else {
+                searchInfo.style.display = 'none';
+            }
+        }
+
+        // Función para limpiar filtros
+        function limpiarFiltros() {
+            document.getElementById('searchMovimientos').value = '';
+            document.getElementById('filterTipo').value = '';
+            document.getElementById('filterMovimiento').value = '';
+            mostrarMovimientosFiltrados(allMovimientos);
+        }
+
+        // --- NUEVAS FUNCIONES PARA EDITAR Y ELIMINAR ---
+
+        // Funciones para Oficina
+        async function editarOficina(id) {
+            try {
+                const response = await fetch(`/api/inventario/oficina/${id}`);
+                const item = await response.json();
+                
+                if (response.ok) {
+                    document.getElementById('oficinaNombre').value = item.nombre;
+                    document.getElementById('oficinaCantidad').value = item.cantidad;
+                    document.getElementById('oficinaDescripcion').value = item.descripcion || '';
+                    document.getElementById('oficinaUbicacion').value = item.ubicacion || '';
+                    
+                    document.getElementById('addOficinaForm').dataset.editing = id;
+                    document.getElementById('addOficinaModal').querySelector('h2').textContent = 'Editar Útil de Oficina';
+                    document.getElementById('addOficinaModal').style.display = 'flex';
+                } else {
+                    showAlert('Error al cargar datos del item', 'error');
+                }
+            } catch (error) {
+                showAlert('Error de conexión', 'error');
+            }
+        }
+
+        async function eliminarOficina(id) {
+            if (!confirm('¿Estás seguro de que quieres ELIMINAR este registro? Esta acción no se puede deshacer.')) {
+                return;
+            }
+
+            try {
+                const response = await fetch(`/api/inventario/oficina/${id}`, {
+                    method: 'DELETE'
+                });
+
+                const data = await response.json();
+                if (response.ok) {
+                    showAlert('Registro eliminado correctamente', 'success');
+                    loadOficina();
+                } else {
+                    showAlert(data.error || 'Error al eliminar el registro', 'error');
+                }
+            } catch (error) {
+                showAlert('Error de conexión', 'error');
+            }
+        }
+
+        // Funciones para Limpieza
+        async function editarLimpieza(id) {
+            try {
+                const response = await fetch(`/api/inventario/limpieza/${id}`);
+                const item = await response.json();
+                
+                if (response.ok) {
+                    document.getElementById('limpiezaProducto').value = item.producto;
+                    document.getElementById('limpiezaCantidad').value = item.cantidad;
+                    document.getElementById('limpiezaTipo').value = item.tipo || '';
+                    document.getElementById('limpiezaProveedor').value = item.proveedor || '';
+                    
+                    document.getElementById('addLimpiezaForm').dataset.editing = id;
+                    document.getElementById('addLimpiezaModal').querySelector('h2').textContent = 'Editar Producto de Limpieza';
+                    document.getElementById('addLimpiezaModal').style.display = 'flex';
+                } else {
+                    showAlert('Error al cargar datos del item', 'error');
+                }
+            } catch (error) {
+                showAlert('Error de conexión', 'error');
+            }
+        }
+
+        async function eliminarLimpieza(id) {
+            if (!confirm('¿Estás seguro de que quieres ELIMINAR este registro? Esta acción no se puede deshacer.')) {
+                return;
+            }
+
+            try {
+                const response = await fetch(`/api/inventario/limpieza/${id}`, {
+                    method: 'DELETE'
+                });
+
+                const data = await response.json();
+                if (response.ok) {
+                    showAlert('Registro eliminado correctamente', 'success');
+                    loadLimpieza();
+                } else {
+                    showAlert(data.error || 'Error al eliminar el registro', 'error');
+                }
+            } catch (error) {
+                showAlert('Error de conexión', 'error');
+            }
+        }
+
+        // Funciones para Garrafones
+        async function editarGarrafon(id) {
+            try {
+                const response = await fetch(`/api/inventario/garrafones/${id}`);
+                const item = await response.json();
+                
+                if (response.ok) {
+                    document.getElementById('garrafonesTipo').value = item.tipo;
+                    document.getElementById('garrafonesCantidad').value = item.cantidad;
+                    document.getElementById('garrafonesEstado').value = item.estado;
+                    document.getElementById('garrafonesUbicacion').value = item.ubicacion || '';
+                    document.getElementById('garrafonesObservaciones').value = item.observaciones || '';
+                    
+                    document.getElementById('addGarrafonesForm').dataset.editing = id;
+                    document.getElementById('addGarrafonesModal').querySelector('h2').textContent = 'Editar Item';
+                    document.getElementById('addGarrafonesModal').style.display = 'flex';
+                } else {
+                    showAlert('Error al cargar datos del item', 'error');
+                }
+            } catch (error) {
+                showAlert('Error de conexión', 'error');
+            }
+        }
+
+        async function eliminarGarrafon(id) {
+            if (!confirm('¿Estás seguro de que quieres ELIMINAR este registro? Esta acción no se puede deshacer.')) {
+                return;
+            }
+
+            try {
+                const response = await fetch(`/api/inventario/garrafones/${id}`, {
+                    method: 'DELETE'
+                });
+
+                const data = await response.json();
+                if (response.ok) {
+                    showAlert('Registro eliminado correctamente', 'success');
+                    loadGarrafones();
+                } else {
+                    showAlert(data.error || 'Error al eliminar el registro', 'error');
+                }
+            } catch (error) {
+                showAlert('Error de conexión', 'error');
+            }
+        }
+
+        // --- Funciones Auxiliares ---
+        function hideAllSections() {
+            document.getElementById('usersSection').style.display = 'none';
+            document.getElementById('oficinaSection').style.display = 'none';
+            document.getElementById('limpiezaSection').style.display = 'none';
+            document.getElementById('garrafonesSection').style.display = 'none';
+            document.getElementById('movimientosSection').style.display = 'none';
+            document.getElementById('filesSection').style.display = 'none';
+        }
+
+        function getCantidadClass(cantidad) {
+            if (cantidad > 20) return 'cantidad-alta';
+            if (cantidad > 5) return 'cantidad-media';
+            return 'cantidad-baja';
+        }
+
+        function getTipoNombre(tipo) {
+            const tipos = {
+                'garrafon': 'Garrafón',
+                'sello': 'Sello', 
+                'tapon': 'Tapón'
+            };
+            return tipos[tipo] || tipo;
+        }
+
+        function getEstadoNombre(estado) {
+            const estados = {
+                'nuevo': 'Nuevo',
+                'usado': 'Usado',
+                'danado': 'Dañado'
+            };
+            return estados[estado] || estado;
+        }
+
+        function getInventarioNombre(tipo) {
+            const inventarios = {
+                'oficina': 'Útiles Oficina',
+                'limpieza': 'Útiles Limpieza',
+                'garrafones': 'Garrafones/Sellos'
+            };
+            return inventarios[tipo] || tipo;
+        }
+
+        function updateOficinaStats(items) {
+            const totalItems = items.length;
+            const totalCantidad = items.reduce((sum, item) => sum + item.cantidad, 0);
+            const statsDiv = document.getElementById('oficinaStats');
+            
+            statsDiv.innerHTML = `
+                <div class="stat-card">
+                    <div class="stat-number">${totalItems}</div>
+                    <div class="stat-label">Total Items</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-number">${totalCantidad}</div>
+                    <div class="stat-label">Total Unidades</div>
+                </div>
+            `;
+        }
+
+        function updateLimpiezaStats(items) {
+            const totalItems = items.length;
+            const totalCantidad = items.reduce((sum, item) => sum + item.cantidad, 0);
+            const statsDiv = document.getElementById('limpiezaStats');
+            
+            statsDiv.innerHTML = `
+                <div class="stat-card">
+                    <div class="stat-number">${totalItems}</div>
+                    <div class="stat-label">Total Productos</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-number">${totalCantidad}</div>
+                    <div class="stat-label">Total Unidades</div>
+                </div>
+            `;
+        }
+
+        function updateGarrafonesStats(items) {
+            const totalItems = items.length;
+            const totalCantidad = items.reduce((sum, item) => sum + item.cantidad, 0);
+            const garrafones = items.filter(item => item.tipo === 'garrafon').reduce((sum, item) => sum + item.cantidad, 0);
+            const statsDiv = document.getElementById('garrafonesStats');
+            
+            statsDiv.innerHTML = `
+                <div class="stat-card">
+                    <div class="stat-number">${totalItems}</div>
+                    <div class="stat-label">Total Items</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-number">${totalCantidad}</div>
+                    <div class="stat-label">Total Unidades</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-number">${garrafones}</div>
+                    <div class="stat-label">Garrafones</div>
+                </div>
+            `;
+        }
+
+        // --- Modales de Inventario ---
+        function showAddOficinaModal() {
+            document.getElementById('addOficinaModal').style.display = 'flex';
+        }
+
+        function closeAddOficinaModal() {
+            document.getElementById('addOficinaModal').style.display = 'none';
+            document.getElementById('addOficinaForm').reset();
+            delete document.getElementById('addOficinaForm').dataset.editing;
+            document.getElementById('addOficinaModal').querySelector('h2').textContent = 'Agregar Útil de Oficina';
+        }
+
+        function showAddLimpiezaModal() {
+            document.getElementById('addLimpiezaModal').style.display = 'flex';
+        }
+
+        function closeAddLimpiezaModal() {
+            document.getElementById('addLimpiezaModal').style.display = 'none';
+            document.getElementById('addLimpiezaForm').reset();
+            delete document.getElementById('addLimpiezaForm').dataset.editing;
+            document.getElementById('addLimpiezaModal').querySelector('h2').textContent = 'Agregar Producto de Limpieza';
+        }
+
+        function showAddGarrafonesModal() {
+            document.getElementById('addGarrafonesModal').style.display = 'flex';
+        }
+
+        function closeAddGarrafonesModal() {
+            document.getElementById('addGarrafonesModal').style.display = 'none';
+            document.getElementById('addGarrafonesForm').reset();
+            delete document.getElementById('addGarrafonesForm').dataset.editing;
+            document.getElementById('addGarrafonesModal').querySelector('h2').textContent = 'Agregar Item';
+        }
+
+        function showMovimientoModal(tipo, itemId, itemNombre) {
+            document.getElementById('movimientoItemId').value = itemId;
+            document.getElementById('movimientoTipo').value = tipo;
+            document.getElementById('movimientoTitle').textContent = `Movimiento - ${itemNombre}`;
+            document.getElementById('movimientoModal').style.display = 'flex';
+        }
+
+        function closeMovimientoModal() {
+            document.getElementById('movimientoModal').style.display = 'none';
+            document.getElementById('movimientoForm').reset();
+        }
+
+        // --- Event Listeners ---
+        document.getElementById('btnUpload').addEventListener('click', () => {
+            // Si es admin o maestro, redirige a la página de gestión de archivos
+            if (currentUser.tipo === 'admin' || currentUser.tipo === 'maestro') {
+                window.location.href = 'archivos.html';
+            } 
+            // Si es invitado, muestra los archivos disponibles para ver/descargar
+            else if (currentUser.tipo === 'invitado') {
+                loadFiles();
+            }
+        });
+
+        document.getElementById('btnUsers').addEventListener('click', loadUsers);
+        document.getElementById('btnOficina').addEventListener('click', loadOficina);
+        document.getElementById('btnLimpieza').addEventListener('click', loadLimpieza);
+        document.getElementById('btnGarrafones').addEventListener('click', loadGarrafones);
+        document.getElementById('btnMovimientos').addEventListener('click', loadMovimientos);
+
+        // Formularios de Inventario - MODIFICADOS PARA SOPORTAR EDICIÓN
+        document.getElementById('addOficinaForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const formData = {
+                nombre: document.getElementById('oficinaNombre').value,
+                cantidad: parseInt(document.getElementById('oficinaCantidad').value),
+                descripcion: document.getElementById('oficinaDescripcion').value,
+                ubicacion: document.getElementById('oficinaUbicacion').value
+            };
+
+            const isEditing = document.getElementById('addOficinaForm').dataset.editing;
+            const url = isEditing ? `/api/inventario/oficina/${isEditing}` : '/api/inventario/oficina';
+            const method = isEditing ? 'PUT' : 'POST';
+
+            try {
+                const response = await fetch(url, {
+                    method: method,
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(formData)
+                });
+
+                const data = await response.json();
+                if (response.ok) {
+                    showAlert(isEditing ? 'Útil de oficina actualizado exitosamente' : 'Útil de oficina agregado exitosamente', 'success');
+                    closeAddOficinaModal();
+                    loadOficina();
+                } else {
+                    showAlert(data.error || `Error al ${isEditing ? 'actualizar' : 'agregar'} útil`, 'error');
+                }
+            } catch (error) {
+                showAlert('Error de conexión', 'error');
+            }
+        });
+
+        document.getElementById('addLimpiezaForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const formData = {
+                producto: document.getElementById('limpiezaProducto').value,
+                cantidad: parseInt(document.getElementById('limpiezaCantidad').value),
+                tipo: document.getElementById('limpiezaTipo').value,
+                proveedor: document.getElementById('limpiezaProveedor').value
+            };
+
+            const isEditing = document.getElementById('addLimpiezaForm').dataset.editing;
+            const url = isEditing ? `/api/inventario/limpieza/${isEditing}` : '/api/inventario/limpieza';
+            const method = isEditing ? 'PUT' : 'POST';
+
+            try {
+                const response = await fetch(url, {
+                    method: method,
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(formData)
+                });
+
+                const data = await response.json();
+                if (response.ok) {
+                    showAlert(isEditing ? 'Producto de limpieza actualizado exitosamente' : 'Producto de limpieza agregado exitosamente', 'success');
+                    closeAddLimpiezaModal();
+                    loadLimpieza();
+                } else {
+                    showAlert(data.error || `Error al ${isEditing ? 'actualizar' : 'agregar'} producto`, 'error');
+                }
+            } catch (error) {
+                showAlert('Error de conexión', 'error');
+            }
+        });
+
+        document.getElementById('addGarrafonesForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const formData = {
+                tipo: document.getElementById('garrafonesTipo').value,
+                cantidad: parseInt(document.getElementById('garrafonesCantidad').value),
+                estado: document.getElementById('garrafonesEstado').value,
+                ubicacion: document.getElementById('garrafonesUbicacion').value,
+                observaciones: document.getElementById('garrafonesObservaciones').value
+            };
+
+            const isEditing = document.getElementById('addGarrafonesForm').dataset.editing;
+            const url = isEditing ? `/api/inventario/garrafones/${isEditing}` : '/api/inventario/garrafones';
+            const method = isEditing ? 'PUT' : 'POST';
+
+            try {
+                const response = await fetch(url, {
+                    method: method,
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(formData)
+                });
+
+                const data = await response.json();
+                if (response.ok) {
+                    showAlert(isEditing ? 'Item actualizado exitosamente' : 'Item agregado exitosamente', 'success');
+                    closeAddGarrafonesModal();
+                    loadGarrafones();
+                } else {
+                    showAlert(data.error || `Error al ${isEditing ? 'actualizar' : 'agregar'} item`, 'error');
+                }
+            } catch (error) {
+                showAlert('Error de conexión', 'error');
+            }
+        });
+
+        document.getElementById('movimientoForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const formData = {
+                movimiento: document.getElementById('movimientoTipoMov').value,
+                cantidad: parseInt(document.getElementById('movimientoCantidad').value),
+                observaciones: document.getElementById('movimientoObservaciones').value
+            };
+
+            const itemId = document.getElementById('movimientoItemId').value;
+            const tipo = document.getElementById('movimientoTipo').value;
+
+            try {
+                // ✅ SOLUCIÓN: CAMBIA ESTA LÍNEA - AGREGA '/movimiento' AL FINAL
+                const response = await fetch(`/api/inventario/${tipo}/${itemId}/movimiento`, {
+                    method: 'PUT',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(formData)
+                });
+
+                const data = await response.json();
+                if (response.ok) {
+                    showAlert(`Movimiento registrado: ${formData.movimiento} de ${formData.cantidad} unidades`, 'success');
+                    closeMovimientoModal();
+                    // Recargar la sección actual
+                    if (tipo === 'oficina') loadOficina();
+                    else if (tipo === 'limpieza') loadLimpieza();
+                    else if (tipo === 'garrafones') loadGarrafones();
+                } else {
+                    showAlert(data.error || 'Error al registrar movimiento', 'error');
+                }
+            } catch (error) {
+                showAlert('Error de conexión', 'error');
+            }
+        });
+
+        // Función para eliminar archivos
+        async function deleteFile(fileId) {
+            if (!confirm('¿Estás seguro de eliminar este archivo? Esta acción es irreversible.')) return;
+            try {
+                const response = await fetch(`/api/files/${fileId}`, { method: 'DELETE' });
+                const data = await response.json();
+                if (response.ok) {
+                    showAlert('Archivo eliminado exitosamente', 'success');
+                    loadFiles(); // Recargar la lista de archivos
+                } else {
+                    showAlert(data.error || 'Error al eliminar archivo', 'error');
+                }
+            } catch (error) {
+                showAlert('Error de conexión', 'error');
+            }
+        }
+
+        // --- Funciones existentes de Usuarios ---
+        async function deleteUser(userId) {
+            if (!confirm('¿Estás seguro de eliminar este usuario?')) return;
+            try {
+                const response = await fetch(`/api/users/${userId}`, { method: 'DELETE' });
+                const data = await response.json();
+                if (response.ok) {
+                    showAlert('Usuario eliminado exitosamente', 'success');
+                    loadUsers(); 
+                } else {
+                    showAlert(data.error || 'Error al eliminar usuario', 'error');
+                }
+            } catch (error) {
+                showAlert('Error de conexión: ' + error.message, 'error');
+            }
+        }
+
+        async function logout() {
+            try {
+                await fetch('/api/logout', { method: 'POST' });
+                window.location.href = '/';
+            } catch (error) {
+                window.location.href = '/';
+            }
+        }
+
+        function showAlert(message, type) {
+            const alert = document.getElementById('alert');
+            alert.textContent = message;
+            alert.className = `alert alert-${type}`;
+            alert.style.display = 'block';
+            setTimeout(() => { alert.style.display = 'none'; }, 5000);
+        }
+
+        // Event listener para búsqueda en tiempo real
+        document.getElementById('searchMovimientos').addEventListener('input', function() {
+            // Búsqueda en tiempo real después de 500ms de inactividad
+            clearTimeout(this.searchTimeout);
+            this.searchTimeout = setTimeout(() => {
+                filtrarMovimientos();
+            }, 500);
+        });
+
+        document.getElementById('filterTipo').addEventListener('change', filtrarMovimientos);
+        document.getElementById('filterMovimiento').addEventListener('change', filtrarMovimientos);
+
+        // Cargar usuario al iniciar
+        loadUser();
+    </script>
+</body>
+</html>

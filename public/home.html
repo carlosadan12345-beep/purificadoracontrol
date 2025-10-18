@@ -1,0 +1,164 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="Content-Security-Policy" content="default-src 'self' 'unsafe-inline'">
+    <title>Purificadora Control - PNC Guatemala</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            height: 100vh;
+            background-color: #003366;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            position: relative;
+        }
+
+        body::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-image: url('logo.jpg');
+            background-size: cover;
+            background-position: center;
+            background-repeat: no-repeat;
+            opacity: 0.2;
+            z-index: 0;
+        }
+
+        .container {
+            position: relative;
+            z-index: 2;
+            text-align: center;
+            background: rgba(255, 255, 255, 0.95);
+            padding: 50px 40px;
+            border-radius: 20px;
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.4);
+            max-width: 500px;
+            width: 90%;
+        }
+
+        .logo {
+            width: 150px;
+            height: 150px;
+            margin: 0 auto 30px;
+            border-radius: 50%;
+            overflow: hidden;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+            background: white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .logo img {
+            width: 100%;
+            height: 100%;
+            object-fit: contain;
+            padding: 10px;
+        }
+
+        h1 {
+            color: #003366;
+            margin-bottom: 10px;
+            font-size: 28px;
+        }
+
+        .subtitle {
+            color: #666;
+            margin-bottom: 40px;
+            font-size: 16px;
+        }
+
+        .button-container {
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+
+        .btn {
+            padding: 18px 40px;
+            font-size: 18px;
+            font-weight: bold;
+            text-decoration: none;
+            color: white;
+            border-radius: 10px;
+            transition: all 0.3s ease;
+            cursor: pointer;
+            border: none;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, #003366, #0055aa);
+        }
+
+        .btn-primary:hover {
+            background: linear-gradient(135deg, #0055aa, #0077cc);
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(0, 0, 0, 0.3);
+        }
+
+        .btn-secondary {
+            background: linear-gradient(135deg, #FFD700, #FFA500);
+            color: #003366;
+        }
+
+        .btn-secondary:hover {
+            background: linear-gradient(135deg, #FFA500, #FF8C00);
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(0, 0, 0, 0.3);
+        }
+
+        .footer {
+            margin-top: 30px;
+            color: #666;
+            font-size: 14px;
+        }
+
+        @media (max-width: 600px) {
+            .container {
+                padding: 40px 30px;
+            }
+
+            h1 {
+                font-size: 24px;
+            }
+
+            .btn {
+                font-size: 16px;
+                padding: 15px 30px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="logo">
+            <img src="logo.jpg" alt="PNC Guatemala">
+        </div>
+        <h1>PURIFICADORA CONTROL</h1>
+        <p class="subtitle">Policía Nacional Civil de Guatemala</p>
+        
+        <div class="button-container">
+            <a href="register.html" class="btn btn-primary">REGISTRAR USUARIO</a>
+            <a href="login.html" class="btn btn-secondary">INGRESAR</a>
+        </div>
+
+        <div class="footer">
+            <p>Sistema de Control de Purificadora</p>
+        </div>
+    </div>
+</body>
+</html>
